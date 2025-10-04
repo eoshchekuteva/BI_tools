@@ -5,3 +5,6 @@ def is_dna(sequence):
 def is_rna(sequence):
     rna = set("AUGC")
     return set(sequence) <= rna
+
+def is_nucleic_acid(sequence):
+    return is_dna(sequence) or is_rna(sequence)
