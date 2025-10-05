@@ -4,24 +4,20 @@ The project is modular and organized into separate files for clarity and reuse.
 
 P.S. This repository was created for educational purposes.
 
----
-
 ## Project structure
 
 ```
 BI_tools/
 │
 ├── modules/
-│ ├── filter_fastq_funcs.py 
-│ ├── nucleic_acid_func.py 
-│ ├── phred33.py 
-│ ├── transcription_funcs.py 
+│  ├── filter_fastq_funcs.py 
+│  ├── nucleic_acid_func.py 
+│  ├── phred33.py 
+│  ├── transcription_funcs.py 
 │
 ├── main.py 
 └── README.md 
 ```
-
----
 
 ## Description
 
@@ -62,3 +58,14 @@ filtered = filter_fastq(sequences, gc_bounds=(20, 80), length_bounds=1000, quali
 print(filtered)
 ```
 
+## Dependencies
+
+- Python 3.10+
+- No external libraries required (standard library only)
+
+## Author
+
+Developed by Ekaterina Shchekuteva.
+Bioinformatics Tools — Homework Project.
+
+![coding cat](https://media.giphy.com/media/JIX9t2j0ZTN9S/giphy.gif)
