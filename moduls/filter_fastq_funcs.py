@@ -1,4 +1,6 @@
-from phred33 import phred_quality
+from phred33 import phred_quality, is_phred
+from nucleic_acid_funcs import is_nucleic_acid
+
 
 def is_gc_filter(sequence: str, start=0, end=100) -> bool:
     """
@@ -50,3 +52,26 @@ def is_quality_control(phred_sequence: str, quality_need) -> bool:
         current_quality += phred_quality[symbol]
     mean_current_quality = current_quality / len(phred_sequence)
     return quality_need <= mean_current_quality
+
+
+def is_validate(sequences: dict) -> bool:
+    """
+    Validate that all records in the given dict contain correct data.
+
+    Each record must have:
+    1. A valid nucleic acid sequence;
+    2. A valid phred quality sequence;
+    3. Matching nucleic acid sequence and quality sequence length.
+
+    Argument:
+    sequence (dict): dictionary of the form {name: (nuc_sequence, phred_sequence)}.
+
+    Return bool:
+    True if all records are valid, False otherwise.
+    """
+    for name, (nuc_seq, phred_seq) in sequences.items():
+        if not (is_nucleic_acid(nuc_seq) and is_phred(phred_seq)):
+            return False
+        if len(nuc_seq) != len(phred_seq):
+            return False
+    return True
