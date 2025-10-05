@@ -24,3 +24,26 @@ def reverse(sequence: str) -> str:
     """
     reverse_sequence = sequence[::-1]
     return reverse_sequence
+
+
+def complement(sequence):
+    """
+    Return the complement DNA strand for the given sequence without changing the letter case.
+
+    Each nucleotide is replaced with its complement: A - T, G - C.
+
+    Argument:
+    sequence (str): the input DNA sequence.
+
+    Return str:
+    the complementary DNA sequence.
+    """
+    complement_dict ={'A': 'T',
+                      'a': 't',
+                      'T': 'A',
+                      't': 'a',
+                      'C': 'G',
+                      'c': 'g',
+                      'G': 'C',
+                      'g': 'c'}
+    return "".join(complement_dict[char] for char in sequence)
