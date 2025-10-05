@@ -66,6 +66,5 @@ print(filtered)
 ## Author
 
 Developed by Ekaterina Shchekuteva.
-Bioinformatics Tools — Homework Project.
 
 ![coding cat](https://media.giphy.com/media/JIX9t2j0ZTN9S/giphy.gif)
