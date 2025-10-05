@@ -1,3 +1,5 @@
+from phred33 import phred_quality
+
 def is_gc_filter(sequence: str, start=0, end=100) -> bool:
     """
     Chek if the GC content of the given sequence is within the specified range.
@@ -28,3 +30,23 @@ def is_length_filter(sequence: str, start=0, end=2**23) -> bool:
     True if the sequence length is within the range, False otherwise.
     """
     return start <= len(sequence) <= end
+
+
+def is_quality_control(phred_sequence: str, quality_need) -> bool:
+    """
+    Check if the average phred quality score of the sequence meets the required treashold.
+
+    The mean quality is calculated using the Phred33 encoding table.
+
+    Argument:
+    phred_sequence (str): the input phred quality sequence.
+    quality_need (int): the minimum avarage quality score required.
+
+    Return bool:
+    True if the average quality is greater than or equal to the threshold, False otherwise.
+    """
+    current_quality = 0
+    for symbol in phred_sequence:
+        current_quality += phred_quality[symbol]
+    mean_current_quality = current_quality / len(phred_sequence)
+    return quality_need <= mean_current_quality
