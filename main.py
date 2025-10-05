@@ -1,4 +1,6 @@
 import modules.filter_fastq_funcs as ff
+import modules.transcription_funcs as trf
+import modules.nucleic_acid_funcs as ncf
 
 
 def filter_fastq(sequences, gc_bounds, length_bounds, quality_threshold) -> dict:
@@ -45,3 +47,45 @@ def filter_fastq(sequences, gc_bounds, length_bounds, quality_threshold) -> dict
             filtered_sequences[name] = (nuc_seq, phred_seq)
 
     return filtered_sequences
+
+
+def run_dna_rna_tools(*args):
+    """
+    Run the specified nucleic acid operation on one or more sequences.
+
+    The last argument defines the operation to perform.
+    Supported operations:
+        - 'is_nucleic_acid'
+        - 'transcribe'
+        - 'reverse'
+        - 'complement'
+        - 'reverse_complement'
+
+    Arguments:
+    *args: One or more nucleotide sequences followed by an operation name.
+    Example: run_dna_rna_tools("ATGC", "AUGC", "reverse_complement")
+
+    Returns str, list or None:
+    1. A single string if one sequence is processed;
+    2. A list of results if multiple sequences are provided;
+    3. None if the specified operation is invalid.
+    """
+    *sequences, operation = args
+
+    operations = {
+        "is_nucleic_acid": ncf.is_nucleic_acid,
+        "transcribe": trf.transcribe,
+        "reverse": trf.reverse,
+        "complement": trf.complement,
+        "reverse_complement": trf.reverse_complement,
+    }
+
+    if operation in operations:
+        func = operations[operation]
+        result = []
+        for sequence in sequences:
+            if ncf.is_nucleic_acid(sequence):
+                result.append(func(sequence))
+        return result[0] if len(result) == 1 else result
+    else:
+        return None
