@@ -1,13 +1,15 @@
 import modules.filter_fastq_funcs as ff
 import modules.transcription_funcs as trf
 import modules.nucleic_acid_funcs as ncf
+import modules.check_bounds as cb
 
 
-def filter_fastq(sequences: dict[int, float, str[str, str]], 
-                 gc_bounds: tuple[float, float] | int | float = (0, 100), 
-                 length_bounds: tuple[int, int] | int = (0, 2**23), 
-                 quality_threshold: int | float = 0
-                 ) -> dict[int, float, str[str, str]]:
+def filter_fastq(
+    sequences: dict[int, float, str[str, str]],
+    gc_bounds: tuple[float, float] | int | float = (0, 100),
+    length_bounds: tuple[int, int] | int = (0, 2**23),
+    quality_threshold: int | float = 0,
+) -> dict[int, float, str[str, str]]:
     """
     Filter FASTQ records based on GC content, sequence length, and quality score.
 
@@ -28,19 +30,8 @@ def filter_fastq(sequences: dict[int, float, str[str, str]],
 
     filtered_sequences = {}
 
-    if isinstance(gc_bounds, (int, float)):
-        gc_start, gc_end = 0, gc_bounds
-    elif isinstance(gc_bounds, (tuple, dict)):
-        gc_start, gc_end = gc_bounds
-    else:
-        gc_start, gc_end = 0, 100
-
-    if isinstance(length_bounds, (int, float)):
-        ln_start, ln_end = 0, length_bounds
-    elif isinstance(length_bounds, (tuple, dict)):
-        ln_start, ln_end = length_bounds
-    else:
-        ln_start, ln_end = 0, 2**23
+    gc_start, gc_end = cb.parse_bounds(gc_bounds, (0, 100))
+    ln_start, ln_end = cb.parse_bounds(length_bounds, (0, 2**23))
 
     for name, (nuc_seq, phred_seq) in sequences.items():
         if (
