@@ -9,7 +9,7 @@ def filter_fastq(
     gc_bounds: tuple[float, float] | int | float = (0, 100),
     length_bounds: tuple[int, int] | int = (0, 2**23),
     quality_threshold: int | float = 0,
-) -> dict[int, float, str[str, str]]:
+) -> dict[int, float, str[str, str]] | None:
     """
     Filter FASTQ records based on GC content, sequence length, and quality score.
 
@@ -42,7 +42,7 @@ def filter_fastq(
     return filtered_sequences
 
 
-def run_dna_rna_tools(*args):
+def run_dna_rna_tools(*args: str) -> str | list[str] | None:
     """
     Run the specified nucleic acid operation on one or more sequences.
 
