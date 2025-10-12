@@ -36,3 +36,36 @@ def convert_multiline_fasta_to_oneline(
         if header and sequence_parts:
             outfile.write(f"{header}\n{''.join(sequence_parts)}\n")
     return output_fasta
+
+
+def parse_blast_output(input_file: str, output_file: Optional[str] = None) -> str:
+    """
+    Parses a BLAST output text file and extracts the top hit (first description)
+    for each query section ("Sequences producing significant alignments:").
+    """
+    if output_file is None:
+        output_file = input_file + "_parsed.txt"
+
+    best_hits = []
+    flag = False
+
+    with open(input_file) as infile:
+        for line in infile:
+            line = line.strip()
+
+            if "Sequences producing significant alignments:" in line:
+                flag = True
+                continue
+            elif flag and line:
+                description = line.split()[0]
+                best_hits.append(description)
+                flag = False
+            else:
+                continue
+        unique_hits = sorted(set(best_hits))
+
+    with open(output_file, "w") as outfile:
+        for hit in unique_hits:
+            outfile.write(f"{hit}\n")
+
+    return output_file
