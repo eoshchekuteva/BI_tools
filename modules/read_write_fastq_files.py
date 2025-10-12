@@ -1,6 +1,7 @@
 from typing import Iterator
 import os
 
+
 def read_fastq_sample(file: str) -> Iterator[tuple[str, str]]:
     """
     Yield nucleic and phred sequence for each sample read in fastq file.
@@ -21,7 +22,7 @@ def read_fastq_sample(file: str) -> Iterator[tuple[str, str]]:
 
         if not phred:
             break
-        
+
         yield seq, phred
 
 
@@ -32,22 +33,19 @@ def safe_write(path: str) -> str | None:
     Argument: str
     Input directory for output file.
 
-    Returns: 
+    Returns:
     - str: The same path if the file does not exist or is empty.
     - None: If the file already exists and contains data.
     """
     if not os.path.exists(path):
         return path
-    elif os.path.getsize(path)==0:
+    elif os.path.getsize(path) == 0:
         return path
     else:
         return None
-    
 
-def write_fastq_sample(output_file, 
-                       read_id: int, 
-                       seq: str, 
-                       phred: str):
+
+def write_fastq_sample(output_file, read_id: int, seq: str, phred: str):
     """
     Write a single read to file in format:
     "name: (nucleotide sequence, phred sequence)"
