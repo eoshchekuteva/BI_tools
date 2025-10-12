@@ -34,10 +34,8 @@ def filter_fastq(
     ln_start, ln_end = cb.parse_bounds(length_bounds, (0, 2**23))
 
     for name, (nuc_seq, phred_seq) in sequences.items():
-        if (
-            ff.is_gc_filter(nuc_seq, gc_start, gc_end)
-            and ff.is_length_filter(nuc_seq, ln_start, ln_end)
-            and ff.is_quality_control(phred_seq, quality_threshold)
+        if ff.bounds_processing(
+            nuc_seq, phred_seq, gc_start, gc_end, ln_start, ln_end, quality_threshold
         ):
             filtered_sequences[name] = (nuc_seq, phred_seq)
 
