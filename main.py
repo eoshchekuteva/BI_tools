@@ -3,7 +3,11 @@ import modules.transcription_funcs as trf
 import modules.nucleic_acid_funcs as ncf
 
 
-def filter_fastq(sequences, gc_bounds, length_bounds, quality_threshold) -> dict:
+def filter_fastq(sequences: dict[int, float, str[str, str]], 
+                 gc_bounds: tuple[float, float] | int | float = (0, 100), 
+                 length_bounds: tuple[int, int] | int = (0, 2**23), 
+                 quality_threshold: int | float = 0
+                 ) -> dict[int, float, str[str, str]]:
     """
     Filter FASTQ records based on GC content, sequence length, and quality score.
 
