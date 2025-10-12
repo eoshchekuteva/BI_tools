@@ -2,44 +2,44 @@ import modules.filter_fastq_funcs as ff
 import modules.transcription_funcs as trf
 import modules.nucleic_acid_funcs as ncf
 import modules.check_bounds as cb
+import os
+import modules.read_write_fastq_files as rwf
 
 
 def filter_fastq(
-    sequences: dict[int, float, str[str, str]],
+    input_fastq: str,
+    output_fastq: str,
     gc_bounds: tuple[float, float] | int | float = (0, 100),
     length_bounds: tuple[int, int] | int = (0, 2**23),
     quality_threshold: int | float = 0,
-) -> dict[int, float, str[str, str]] | None:
+):
     """
-    Filter FASTQ records based on GC content, sequence length, and quality score.
-
-    The function validates all input records, normalizes filtering bounds,
-    and returns only those reads that meet the specified criteria.
+    Filter FASTQ file on-the-fly without loading it entirely into memory.
+    Each read is validated, filtered, and written immediately if it passes.
 
     Argument:
-    sequences (dict): dictionary of reads in the form {name: (nucleotide_seq, phred_seq)}.
+    input_fastq (str): input fastq file directory.
+    output_fastq(str): output fastq file directory.
     gc_bounds (int, float, tuple, optional): GC content threshold.
     length_bounds (int, float, tuple, optional): allowed range of sequence lengths.
     quality_threshold (int, float): minimum average Phred quality score.
-
-    Return dict:
-    Dictionary of filtered sequences that passed all filters.
     """
-    if not ff.is_validate(sequences):
-        return None
-
-    filtered_sequences = {}
-
     gc_start, gc_end = cb.parse_bounds(gc_bounds, (0, 100))
     ln_start, ln_end = cb.parse_bounds(length_bounds, (0, 2**23))
 
-    for name, (nuc_seq, phred_seq) in sequences.items():
-        if ff.bounds_processing(
-            nuc_seq, phred_seq, gc_start, gc_end, ln_start, ln_end, quality_threshold
-        ):
-            filtered_sequences[name] = (nuc_seq, phred_seq)
+    os.makedirs("filtered", exist_ok=True)
+    output_path = rwf.safe_output_path(os.path.join("filtered", output_fastq))
 
-    return filtered_sequences
+    read_id = 0
+
+    with open(input_fastq) as infile, open(output_path, "w") as outfile:
+        for seq, phred in rwf.read_fastq_sample(infile):
+            read_id += 1
+            if ff.is_filter_posses(
+                seq, phred, gc_start, gc_end, ln_start, ln_end, quality_threshold
+            ):
+                passed += 1
+                rwf.write_fastq_sample(outfile, read_id, seq, phred)
 
 
 def run_dna_rna_tools(*args: str) -> str | list[str] | None:
