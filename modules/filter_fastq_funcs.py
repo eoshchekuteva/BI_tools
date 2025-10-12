@@ -34,7 +34,7 @@ def is_length_filter(sequence: str, start=0, end=2**23) -> bool:
     return start <= len(sequence) <= end
 
 
-def is_quality_control(phred_sequence: str, quality_need) -> bool:
+def is_quality_control(phred_sequence: str, min_quality) -> bool:
     """
     Check if the average phred quality score of the sequence meets the required treashold.
 
@@ -51,7 +51,7 @@ def is_quality_control(phred_sequence: str, quality_need) -> bool:
     for symbol in phred_sequence:
         current_quality += phred_quality[symbol]
     mean_current_quality = current_quality / len(phred_sequence)
-    return quality_need <= mean_current_quality
+    return min_quality <= mean_current_quality
 
 
 def is_validate(sequences: dict) -> bool:
@@ -77,19 +77,20 @@ def is_validate(sequences: dict) -> bool:
     return True
 
 
-def bounds_processing(nuc_seq: str, 
-                      phred_seq: str, 
-                      gc_start: float | int, 
-                      gc_end: float | int, 
-                      ln_start: int, 
-                      ln_end: int, 
-                      quality_threshold: int
-                      ) -> bool:
+def bounds_processing(
+    nuc_seq: str,
+    phred_seq: str,
+    gc_start: float | int,
+    gc_end: float | int,
+    ln_start: int,
+    ln_end: int,
+    quality_threshold: int,
+) -> bool:
     """
     Apply all filtering criteria (GC content, length, quality)
     to a given nucleotide and quality sequence.
 
-    Returns bool: 
+    Returns bool:
     True if sequence passes all filters, False otherwise.
     """
     return (
