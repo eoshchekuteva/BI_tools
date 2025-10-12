@@ -31,7 +31,7 @@ def safe_write(path: str) -> str | None:
 
     Argument: str
     Input directory for output file.
-    
+
     Returns: 
     - str: The same path if the file does not exist or is empty.
     - None: If the file already exists and contains data.
@@ -43,3 +43,21 @@ def safe_write(path: str) -> str | None:
     else:
         return None
     
+
+def write_fastq_sample(output_file, 
+                       read_id: int, 
+                       seq: str, 
+                       phred: str):
+    """
+    Write a single read to file in format:
+    "name: (nucleotide sequence, phred sequence)"
+
+    Arguments:
+    output_file: An open file object where the record will be written.
+    read_id (int): The identifier or number of the read.
+    seq (str): The nucleotide sequence.
+    phred (str): The PHRED quality string corresponding to the sequence.
+
+    Returns: None
+    """
+    output_file.write(f"{read_id}: ('{seq}', '{phred}')\n")
