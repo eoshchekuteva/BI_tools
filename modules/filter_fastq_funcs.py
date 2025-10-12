@@ -54,30 +54,7 @@ def is_quality_control(phred_sequence: str, min_quality) -> bool:
     return min_quality <= mean_current_quality
 
 
-def is_validate(sequences: dict) -> bool:
-    """
-    Validate that all records in the given dict contain correct data.
-
-    Each record must have:
-    1. A valid nucleic acid sequence;
-    2. A valid phred quality sequence;
-    3. Matching nucleic acid sequence and quality sequence length.
-
-    Argument:
-    sequence (dict): dictionary of the form {name: (nuc_sequence, phred_sequence)}.
-
-    Return bool:
-    True if all records are valid, False otherwise.
-    """
-    for name, (nuc_seq, phred_seq) in sequences.items():
-        if not (is_nucleic_acid(nuc_seq) and is_phred(phred_seq)):
-            return False
-        if len(nuc_seq) != len(phred_seq):
-            return False
-    return True
-
-
-def bounds_processing(
+def is_filter_posses(
     nuc_seq: str,
     phred_seq: str,
     gc_start: float | int,
@@ -87,12 +64,15 @@ def bounds_processing(
     quality_threshold: int,
 ) -> bool:
     """
-    Apply all filtering criteria (GC content, length, quality)
-    to a given nucleotide and quality sequence.
+    Apply all filtering criteria (GC content, length, quality) to a given nucleotide and quality sequence.
 
     Returns bool:
     True if sequence passes all filters, False otherwise.
     """
+    if not (is_nucleic_acid(nuc_seq) and is_phred(phred_seq)):
+        return False
+    if len(nuc_seq) != len(phred_seq):
+        return False
     return (
         is_gc_filter(nuc_seq, gc_start, gc_end)
         and is_length_filter(nuc_seq, ln_start, ln_end)
