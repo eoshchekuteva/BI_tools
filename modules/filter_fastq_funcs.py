@@ -75,3 +75,25 @@ def is_validate(sequences: dict) -> bool:
         if len(nuc_seq) != len(phred_seq):
             return False
     return True
+
+
+def bounds_processing(nuc_seq: str, 
+                      phred_seq: str, 
+                      gc_start: float | int, 
+                      gc_end: float | int, 
+                      ln_start: int, 
+                      ln_end: int, 
+                      quality_threshold: int
+                      ) -> bool:
+    """
+    Apply all filtering criteria (GC content, length, quality)
+    to a given nucleotide and quality sequence.
+
+    Returns bool: 
+    True if sequence passes all filters, False otherwise.
+    """
+    return (
+        is_gc_filter(nuc_seq, gc_start, gc_end)
+        and is_length_filter(nuc_seq, ln_start, ln_end)
+        and is_quality_control(phred_seq, quality_threshold)
+    )
