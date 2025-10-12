@@ -34,7 +34,7 @@ def is_length_filter(sequence: str, start=0, end=2**23) -> bool:
     return start <= len(sequence) <= end
 
 
-def is_quality_control(phred_sequence: str, quality_need) -> bool:
+def is_quality_control(phred_sequence: str, min_quality) -> bool:
     """
     Check if the average phred quality score of the sequence meets the required treashold.
 
@@ -51,27 +51,30 @@ def is_quality_control(phred_sequence: str, quality_need) -> bool:
     for symbol in phred_sequence:
         current_quality += phred_quality[symbol]
     mean_current_quality = current_quality / len(phred_sequence)
-    return quality_need <= mean_current_quality
+    return min_quality <= mean_current_quality
 
 
-def is_validate(sequences: dict) -> bool:
+def is_filter_posses(
+    nuc_seq: str,
+    phred_seq: str,
+    gc_start: float | int,
+    gc_end: float | int,
+    ln_start: int,
+    ln_end: int,
+    quality_threshold: int,
+) -> bool:
     """
-    Validate that all records in the given dict contain correct data.
+    Apply all filtering criteria (GC content, length, quality) to a given nucleotide and quality sequence.
 
-    Each record must have:
-    1. A valid nucleic acid sequence;
-    2. A valid phred quality sequence;
-    3. Matching nucleic acid sequence and quality sequence length.
-
-    Argument:
-    sequence (dict): dictionary of the form {name: (nuc_sequence, phred_sequence)}.
-
-    Return bool:
-    True if all records are valid, False otherwise.
+    Returns bool:
+    True if sequence passes all filters, False otherwise.
     """
-    for name, (nuc_seq, phred_seq) in sequences.items():
-        if not (is_nucleic_acid(nuc_seq) and is_phred(phred_seq)):
-            return False
-        if len(nuc_seq) != len(phred_seq):
-            return False
-    return True
+    if not (is_nucleic_acid(nuc_seq) and is_phred(phred_seq)):
+        return False
+    if len(nuc_seq) != len(phred_seq):
+        return False
+    return (
+        is_gc_filter(nuc_seq, gc_start, gc_end)
+        and is_length_filter(nuc_seq, ln_start, ln_end)
+        and is_quality_control(phred_seq, quality_threshold)
+    )

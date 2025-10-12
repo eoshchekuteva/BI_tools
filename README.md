@@ -10,11 +10,14 @@ P.S. This repository was created for educational purposes.
 BI_tools/
 │
 ├── modules/
+│  ├── check_bounds.py 
 │  ├── filter_fastq_funcs.py 
 │  ├── nucleic_acid_func.py 
 │  ├── phred33.py 
+│  ├── read_write_fastq_files.py 
 │  ├── transcription_funcs.py 
 │
+├── bio_files_processor.py 
 ├── main.py 
 └── README.md 
 ```
@@ -42,20 +45,43 @@ print(run_dna_rna_tools("ATGC", "reverse_complement"))
 ```
 
 #### `filter_fastq()`
-Filters FASTQ sequences by GC content, length, and quality score.
-Validation is performed automatically before filtering.
+Filters FASTQ records on the fly — reads one record, validates, and writes immediately,
+minimizing memory usage.
+
+Implemented using helper modules:
+
+- `filter_fastq_funcs.py` – filtering logic
+- `check_bounds.py` – range validation (GC%, length, quality)
+- `phred33.py` – Phred quality conversion
+- `read_write_fastq_files.py` – safe reading/writing utilities
 
 **Example:**
 ```python
 from main import filter_fastq
 
-sequences = {
-    "read1": ("ATGC", "DFF@"),
-    "read2": ("GGGG", "IIII")
-}
+result = filter_fastq('reads.fastq', gc_bounds=(20, 80), length_bounds=1000, quality_threshold=30)
+```
 
-filtered = filter_fastq(sequences, gc_bounds=(20, 80), length_bounds=1000, quality_threshold=30)
-print(filtered)
+### `bio_files_processors.py`
+
+#### `convert_multiline_fasta_to_oneline()`
+Converts a FASTA file with multiline sequences into a single-line-per-sequence format.
+
+**Example:**
+```python
+from modules.bio_files_processor import convert_multiline_fasta_to_oneline
+
+convert_multiline_fasta_to_oneline("example_multiline_fasta.fasta")
+```
+
+#### `parse_blast_output()`
+Parses BLAST output files, extracts the top hit (first description) from each “Sequences producing significant alignments” section, sorts them alphabetically, and writes to a new file.
+
+**Example:**
+```python
+from modules.bio_files_processor import parse_blast_output
+
+parse_blast_output("example_blast_results.txt")
 ```
 
 ## Dependencies
